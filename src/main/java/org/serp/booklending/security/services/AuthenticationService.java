@@ -1,13 +1,19 @@
 package org.serp.booklending.security.services;
 
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
+import org.serp.booklending.model.Token;
 import org.serp.booklending.model.User;
 import org.serp.booklending.model.request.RegistrationRequest;
 import org.serp.booklending.repository.RoleRepository;
+import org.serp.booklending.repository.TokenRepository;
 import org.serp.booklending.repository.UserRepository;
+import org.serp.booklending.services.EmailService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -17,6 +23,8 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenRepository tokenRepository;
+    private final EmailService emailService;
     public void register(RegistrationRequest request) {
         var userRole=roleRepository.findByName("USER")
                 .orElseThrow(()-> new IllegalStateException("Role user isn't initialize"));
@@ -30,6 +38,34 @@ public class AuthenticationService {
                 .roles(List.of(userRole))
                 .build();
         userRepository.save(user);
-        //todo:sendEmailToUser
+        sendValidationEmail(user);
+    }
+
+    private void sendValidationEmail(User user) {
+        var newToken=generateAndActivationToken(user);
+        // todo: send email
+    }
+
+    private String generateAndActivationToken(User user) {
+        String generateToken=generateActivationCode(6);
+        var token= Token.builder()
+                .token(generateToken)
+                .createdAt(LocalDateTime.now())
+                .expiredAt(LocalDateTime.now().plusMinutes(15))
+                .user(user)
+                .build();
+        tokenRepository.save(token);
+        return generateToken;
+    }
+
+    private String generateActivationCode(int length) {
+        String characters="0123456789";
+        StringBuilder code=new StringBuilder();
+        SecureRandom random=new SecureRandom();
+        for (int j = 0; j < length; j++) {
+            int index=random.nextInt(characters.length());
+            code.append(characters.charAt(j));
+        }
+        return code.toString();
     }
 }
