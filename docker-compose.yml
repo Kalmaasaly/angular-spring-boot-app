@@ -1,27 +1,27 @@
 services:
-  postgress:
+  postgres:
     container_name: postgres-sql-bsn
     image: postgres
     environment:
       POSTGRES_USER: username
-      POSTGRES_PASSEORD: password
+      POSTGRES_PASSWORD: password
       PGDATA: /var/lib/postgresql/data
       POSTGRES_DB: book_landing
     volumes:
       - postgres:/data/postgres
     ports:
       - 5432:5432
-    networks: spring-angular-demo
+    networks:
+      - spring-demo
     restart: unless-stopped
   mail-dev:
-    container_name: mail-dev-book-landing
+    container_name: mail-dev-bsn
     image: maildev/maildev
     ports:
       - 1080:1080
       - 1025:1025
-
 networks:
-  spring-angular-demo:
+  spring-demo:
     driver: bridge
 
 volumes:

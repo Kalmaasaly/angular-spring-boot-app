@@ -1,7 +1,9 @@
 package org.serp.booklending.security.services;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
+import org.serp.booklending.model.EmailTemplate;
 import org.serp.booklending.model.Token;
 import org.serp.booklending.model.User;
 import org.serp.booklending.model.request.RegistrationRequest;
@@ -9,6 +11,7 @@ import org.serp.booklending.repository.RoleRepository;
 import org.serp.booklending.repository.TokenRepository;
 import org.serp.booklending.repository.UserRepository;
 import org.serp.booklending.services.EmailService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +28,9 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final TokenRepository tokenRepository;
     private final EmailService emailService;
-    public void register(RegistrationRequest request) {
+    @Value("application.mailing.frontend.activation-url")
+    private  String activationUrl;
+    public void register(RegistrationRequest request) throws MessagingException {
         var userRole=roleRepository.findByName("USER")
                 .orElseThrow(()-> new IllegalStateException("Role user isn't initialize"));
         var user= User.builder()
@@ -41,9 +46,12 @@ public class AuthenticationService {
         sendValidationEmail(user);
     }
 
-    private void sendValidationEmail(User user) {
+    private void sendValidationEmail(User user) throws MessagingException {
         var newToken=generateAndActivationToken(user);
-        // todo: send email
+
+        emailService.sendEmail(user.getEmail(),user.getFullName(), EmailTemplate.ACTIVATE_ACCOUNT,
+                activationUrl,newToken,"Account Activation");
+
     }
 
     private String generateAndActivationToken(User user) {
