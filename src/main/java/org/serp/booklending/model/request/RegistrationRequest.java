@@ -3,12 +3,14 @@ package org.serp.booklending.model.request;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Data
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class RegistrationRequest {
 
