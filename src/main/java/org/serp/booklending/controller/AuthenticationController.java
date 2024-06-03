@@ -5,7 +5,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.serp.booklending.model.request.AuthenticationRequest;
 import org.serp.booklending.model.request.RegistrationRequest;
+import org.serp.booklending.model.response.AuthenticationResponse;
 import org.serp.booklending.security.services.AuthenticationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -25,5 +28,18 @@ public class AuthenticationController {
     public ResponseEntity<?> register(@RequestBody @Valid RegistrationRequest request) throws MessagingException {
         service.register(request);
         return ResponseEntity.accepted().build();
+    }
+    @PostMapping("/authenticate")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody @Valid AuthenticationRequest request){
+        return
+        ResponseEntity.ok(service.authenticate(request));
+        
+    }
+    @GetMapping("/confirm-account")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void confirm(@RequestBody  String token){
+        
+        service.activateAccount(token);
     }
 }
