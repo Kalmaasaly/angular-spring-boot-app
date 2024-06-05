@@ -1,17 +1,13 @@
 package org.serp.booklending.controller;
-
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import org.serp.booklending.model.request.AuthenticationRequest;
 import org.serp.booklending.model.request.RegistrationRequest;
 import org.serp.booklending.model.response.AuthenticationResponse;
 import org.serp.booklending.security.services.AuthenticationService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +34,7 @@ public class AuthenticationController {
     }
     @GetMapping("/confirm-account")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void confirm(@RequestBody  String token){
+    public void confirm(@RequestBody  String token) throws MessagingException{
         
         service.activateAccount(token);
     }

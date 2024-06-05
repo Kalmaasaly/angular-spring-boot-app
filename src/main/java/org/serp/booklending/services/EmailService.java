@@ -5,14 +5,13 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.serp.booklending.model.EmailTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import javax.swing.*;
+
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -34,8 +33,7 @@ public class EmailService {
             EmailTemplate emailTemplate,
             String conformationUrl,
             String activationCode,
-            String subject
-    ) throws MessagingException {
+            String subject) throws MessagingException {
         String templateName;
         if (emailTemplate == null) {
             templateName = "confirm-email";
@@ -46,17 +44,18 @@ public class EmailService {
         MimeMessageHelper helper = new MimeMessageHelper(
                 mimeMessage, MULTIPART_MODE_MIXED,
                 StandardCharsets.UTF_8.name());
-        Map<String,Object> properties=new HashMap<>();
-        properties.put("username",username);
-        properties.put("confirmationUrl",conformationUrl);
-        properties.put("activation_code",activationCode);
-        Context context=new Context();
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("username", username);
+        properties.put("confirmationUrl", conformationUrl);
+        properties.put("activation_code", activationCode);
+        Context context = new Context();
         context.setVariables(properties);
         helper.setTo(to);
+        helper.setFrom("contact@gmail.com");
         helper.setTo("kalmaasaly@gmail.com");
         helper.setSubject(subject);
-        String template=templateEngine.process(templateName,context);
-        helper.setText(template,true);
+        String template = templateEngine.process(templateName, context);
+        helper.setText(template, true);
         mailSender.send(mimeMessage);
     }
 }

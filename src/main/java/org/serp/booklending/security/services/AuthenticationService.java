@@ -1,6 +1,7 @@
 package org.serp.booklending.security.services;
 
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,10 @@ import org.serp.booklending.repository.TokenRepository;
 import org.serp.booklending.repository.UserRepository;
 import org.serp.booklending.services.EmailService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +40,12 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     @Value("application.mailing.frontend.activation-url")
-    private  String activationUrl;
+    private String activationUrl;
+
     public void register(RegistrationRequest request) throws MessagingException {
-        var userRole=roleRepository.findByName("USER")
-                .orElseThrow(()-> new IllegalStateException("Role user isn't initialize"));
-        var user= User.builder()
+        var userRole = roleRepository.findByName("USER")
+                .orElseThrow(() -> new IllegalStateException("Role user isn't initialize"));
+        var user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getFirstName())
                 .email(request.getEmail())
@@ -55,16 +59,16 @@ public class AuthenticationService {
     }
 
     private void sendValidationEmail(User user) throws MessagingException {
-        var newToken=generateAndActivationToken(user);
+        var newToken = generateAndActivationToken(user);
 
-        emailService.sendEmail(user.getEmail(),user.getFullName(), EmailTemplate.ACTIVATE_ACCOUNT,
-                activationUrl,newToken,"Account Activation");
+        emailService.sendEmail(user.getEmail(), user.getFullName(), EmailTemplate.ACTIVATE_ACCOUNT,
+                activationUrl, newToken, "Account Activation");
 
     }
 
     private String generateAndActivationToken(User user) {
-        String generateToken=generateActivationCode(6);
-        var token= Token.builder()
+        String generateToken = generateActivationCode(6);
+        var token = Token.builder()
                 .token(generateToken)
                 .createdAt(LocalDateTime.now())
                 .expiredAt(LocalDateTime.now().plusMinutes(15))
@@ -75,11 +79,11 @@ public class AuthenticationService {
     }
 
     private String generateActivationCode(int length) {
-        String characters="0123456789";
-        StringBuilder code=new StringBuilder();
-        SecureRandom random=new SecureRandom();
+        String characters = "0123456789";
+        StringBuilder code = new StringBuilder();
+        SecureRandom random = new SecureRandom();
         for (int j = 0; j < length; j++) {
-            int index=random.nextInt(characters.length());
+            int index = random.nextInt(characters.length());
             code.append(characters.charAt(j));
         }
         return code.toString();
@@ -87,19 +91,33 @@ public class AuthenticationService {
 
     public AuthenticationResponse authenticate(@Valid AuthenticationRequest request) {
         var auth = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                    request.getEmail(),
-                    request.getPassword()
-            )
-    );
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()));
 
-    var claims = new HashMap<String, Object>();
-    var user = ((User) auth.getPrincipal());
-    claims.put("fullName", user.getFullName());
+        var claims = new HashMap<String, Object>();
+        var user = ((User) auth.getPrincipal());
+        claims.put("fullName", user.getFullName());
 
-    var jwtToken = jwtService.generateToken(claims, (User) auth.getPrincipal());
-    return AuthenticationResponse.builder()
-            .token(jwtToken)
-            .build();
+        var jwtToken = jwtService.generateToken(claims, (User) auth.getPrincipal());
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
+
+    @Transactional
+    public void activateAccount(String token) throws MessagingException {
+        Token savedToken = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
+        if (LocalDateTime.now().isAfter(savedToken.getExpiredAt())) {
+            sendValidationEmail(savedToken.getUser());
+            throw new RuntimeException("Activate token has been expired, A new token email send");
+        }
+        var user=userRepository.findById(savedToken.getUser().getId())
+        .orElseThrow(()->new UsernameNotFoundException("User not found"));
+        user.setEnabled(true);
+        userRepository.save(savedToken);
+        savedToken.setValidatedAt(LocalDateTime.now());
+        tokenRepository.save(savedToken);
     }
 }
