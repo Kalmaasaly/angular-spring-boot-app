@@ -32,9 +32,8 @@ public class AuthenticationController {
         ResponseEntity.ok(service.authenticate(request));
         
     }
-    @GetMapping("/confirm-account")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void confirm(@RequestBody  String token) throws MessagingException{
+    @GetMapping("/activate-account")
+    public void confirm(@RequestParam String token) throws MessagingException{
         
         service.activateAccount(token);
     }
