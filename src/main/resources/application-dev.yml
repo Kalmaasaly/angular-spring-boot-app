@@ -33,7 +33,7 @@ application:
       port: 8080
     security:
       jwt:
-        secret-key: YXNkZmFzZGZhc2RmYXNkZmFzZGY=
+        secret-key: 8bf974291c4cd0875bca47d5bf3cb42ac289b038747aae6378cde110d00a2ab8
         expiration: 8640000
 
     mailing:
