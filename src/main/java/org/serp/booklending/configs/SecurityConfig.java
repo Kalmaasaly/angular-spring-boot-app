@@ -1,4 +1,4 @@
-package org.serp.booklending.security.configs;
+package org.serp.booklending.configs;
 
 import lombok.RequiredArgsConstructor;
 
