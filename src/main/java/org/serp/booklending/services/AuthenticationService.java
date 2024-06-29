@@ -1,9 +1,8 @@
-package org.serp.booklending.security.services;
+package org.serp.booklending.services;
 
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.serp.booklending.model.EmailTemplate;
 import org.serp.booklending.model.Token;
@@ -14,9 +13,7 @@ import org.serp.booklending.model.response.AuthenticationResponse;
 import org.serp.booklending.repository.RoleRepository;
 import org.serp.booklending.repository.TokenRepository;
 import org.serp.booklending.repository.UserRepository;
-import org.serp.booklending.services.EmailService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

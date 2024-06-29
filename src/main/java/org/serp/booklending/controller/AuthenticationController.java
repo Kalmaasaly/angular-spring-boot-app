@@ -2,7 +2,7 @@ package org.serp.booklending.controller;
 import org.serp.booklending.model.request.AuthenticationRequest;
 import org.serp.booklending.model.request.RegistrationRequest;
 import org.serp.booklending.model.response.AuthenticationResponse;
-import org.serp.booklending.security.services.AuthenticationService;
+import org.serp.booklending.services.AuthenticationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
