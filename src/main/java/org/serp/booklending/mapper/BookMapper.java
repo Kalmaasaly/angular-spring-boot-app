@@ -2,8 +2,10 @@ package org.serp.booklending.mapper;
 
 
 import org.serp.booklending.model.Book;
+import org.serp.booklending.model.BookTransactionHistory;
 import org.serp.booklending.model.request.BookRequest;
 import org.serp.booklending.model.response.BookResponse;
+import org.serp.booklending.model.response.BorrowedBookResponse;
 
 
 public class BookMapper {
@@ -36,4 +38,16 @@ public class BookMapper {
     }
 
 
+    public BorrowedBookResponse toBorrowedBookResponse(BookTransactionHistory history) {
+        var book=history.getBook();
+        return BorrowedBookResponse.builder()
+                .id(book.getId())
+                .title(book.getTitle())
+                .authorName(book.getAuthorName())
+                .isbn(book.getIsbn())
+                .rate(book.getRate())
+                .returned(history.isReturned())
+                .returnedApproved(history.isReturnedApproved())
+                .build();
+    }
 }
