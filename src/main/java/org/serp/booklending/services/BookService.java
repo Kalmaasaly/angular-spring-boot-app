@@ -140,5 +140,29 @@ public class BookService {
 
         return bookId;
     }
+
+    public Long borrowBook(Long bookId, Authentication authentication) {
+         var book=bookRepository.findById(bookId)
+                 .orElseThrow(() -> new EntityNotFoundException("No Book with this ID" + bookId));
+         if (!book.isShareable() || book.isArchived()){
+             throw new OperationNotPermittedException("The book cannot be borrowed because it is archived or not shareable.");
+         }
+        User user = (User) authentication.getPrincipal();
+        if (!Objects.equals(book.getOwner().getId(), user.getId())) {
+            throw new OperationNotPermittedException("You cannot borrow your book!!!");
+        }
+        var isAlreadyBorrowed=bookHistoryRepository.isAlreadyBorrowedByUserId(bookId,user.getId());
+        if (isAlreadyBorrowed){
+            throw new OperationNotPermittedException("The book has already been borrowed.");
+        }
+        BookTransactionHistory bookTransactionHistory=BookTransactionHistory
+                .builder()
+                .user(user)
+                .book(book)
+                .returned(false)
+                .returnedApproved(false)
+                .build();
+        return bookHistoryRepository.save(bookTransactionHistory).getId();
+    }
 }
 
