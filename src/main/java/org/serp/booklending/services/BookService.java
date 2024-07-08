@@ -175,13 +175,12 @@ public class BookService {
         if (!Objects.equals(book.getOwner().getId(), user.getId())) {
             throw new OperationNotPermittedException("You cannot borrow or return  your book!!!");
         }
-       BookTransactionHistory bookTransactionHistory=bookHistoryRepository.findBookIdAndUserId(bookId,user.getId())
-               .orElseThrow(()->new OperationNotPermittedException("The book isn't borrowed by you!!!"));
+        BookTransactionHistory bookTransactionHistory = bookHistoryRepository.findBookIdAndUserId(bookId, user.getId())
+                .orElseThrow(() -> new OperationNotPermittedException("The book isn't borrowed by you!!!"));
         bookTransactionHistory.setReturned(true);
-        return  bookHistoryRepository.save(bookTransactionHistory).getId();
+        return bookHistoryRepository.save(bookTransactionHistory).getId();
 
     }
-
 
     public Long returnApproveBook(Long bookId, Authentication authentication) {
         var book = bookRepository.findById(bookId)
@@ -193,10 +192,10 @@ public class BookService {
         if (!Objects.equals(book.getOwner().getId(), user.getId())) {
             throw new OperationNotPermittedException("You cannot borrow or return  your book!!!");
         }
-        BookTransactionHistory bookTransactionHistory=bookHistoryRepository.findBookIdAndOwnerId(bookId,user.getId())
-                .orElseThrow(()->new OperationNotPermittedException("The book isn't yes"));
+        BookTransactionHistory bookTransactionHistory = bookHistoryRepository.findBookIdAndOwnerId(bookId, user.getId())
+                .orElseThrow(() -> new OperationNotPermittedException("The book isn't yes"));
         bookTransactionHistory.setReturnedApproved(true);
-        return  bookHistoryRepository.save(bookTransactionHistory).getId();
+        return bookHistoryRepository.save(bookTransactionHistory).getId();
     }
 }
 

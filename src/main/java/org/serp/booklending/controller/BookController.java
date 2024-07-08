@@ -62,26 +62,27 @@ public class BookController {
         return ResponseEntity.ok(bookService.findAllReturnedBooks(page, size, authentication));
     }
 
-    @PatchMapping("/shareable/{book-i}")
+    @PatchMapping("/shareable/{book-id}")
     public ResponseEntity<Long> updateShareableBook(@PathVariable("book-id") Long bookId, Authentication authentication) {
         return ResponseEntity.ok(bookService.updateShareableBook(bookId, authentication));
     }
 
-    @PatchMapping("/archived/{book-i}")
+    @PatchMapping("/archived/{book-id}")
     public ResponseEntity<Long> updateArchivedBook(@PathVariable("book-id") Long bookId, Authentication authentication) {
         return ResponseEntity.ok(bookService.updateArchivedBook(bookId, authentication));
     }
 
-    @PostMapping("/archived/{book-i}")
+    @PostMapping("/archived/{book-id}")
     public ResponseEntity<Long> borrowBook(@PathVariable("book-id") Long bookId, Authentication authentication) {
         return ResponseEntity.ok(bookService.borrowBook(bookId, authentication));
     }
-    @PatchMapping("/borrowed/return/{book-i}")
+
+    @PatchMapping("/borrowed/return/{book-id}")
     public ResponseEntity<Long> returnBorrowBook(@PathVariable("book-id") Long bookId, Authentication authentication) {
         return ResponseEntity.ok(bookService.returnBorrowBook(bookId, authentication));
     }
 
-@PatchMapping("/borrowed/return/approve/{book-i}")
+    @PatchMapping("/borrowed/return/approve/{book-id}")
     public ResponseEntity<Long> returnApproveBook(@PathVariable("book-id") Long bookId, Authentication authentication) {
         return ResponseEntity.ok(bookService.returnApproveBook(bookId, authentication));
     }
