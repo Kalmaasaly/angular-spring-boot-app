@@ -1,5 +1,6 @@
 package org.serp.booklending.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.serp.booklending.services.BookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(name = "books")
@@ -85,5 +87,15 @@ public class BookController {
     @PatchMapping("/borrowed/return/approve/{book-id}")
     public ResponseEntity<Long> returnApproveBook(@PathVariable("book-id") Long bookId, Authentication authentication) {
         return ResponseEntity.ok(bookService.returnApproveBook(bookId, authentication));
+    }
+    @PostMapping(value = "/cover/{book-id}",consumes = "multipart/form")
+    public ResponseEntity<?> uploadCoverImage(@PathVariable("book-id") Long bookId,
+                                              @Parameter()
+                                              @RequestPart("file") MultipartFile file,
+                                              Authentication authentication){
+
+        bookService.uploadBookCoverImage(bookId,file,authentication);
+        return  ResponseEntity.accepted().build();
+
     }
 }

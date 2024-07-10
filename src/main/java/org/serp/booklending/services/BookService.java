@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,6 +32,7 @@ import static org.serp.booklending.repository.queries.BookQuery.withOwnerId;
 public class BookService {
     private final BookRepository bookRepository;
     private final BookTransactionHistoryRepository bookHistoryRepository;
+    private final FileStorageService fileStorageService;
 
     private final BookMapper bookMapper;
 
@@ -196,6 +198,15 @@ public class BookService {
                 .orElseThrow(() -> new OperationNotPermittedException("The book isn't yes"));
         bookTransactionHistory.setReturnedApproved(true);
         return bookHistoryRepository.save(bookTransactionHistory).getId();
+    }
+
+    public void uploadBookCoverImage(Long bookId, MultipartFile file, Authentication authentication) {
+        var book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("No Book with this ID" + bookId));
+        User user = (User) authentication.getPrincipal();
+        var bookCover=fileStorageService.saveFile(file,user.getId());
+        book.setBookCover(bookCover);
+        bookRepository.save(book);
     }
 }
 
