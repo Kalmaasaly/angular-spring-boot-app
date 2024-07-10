@@ -6,6 +6,7 @@ import org.serp.booklending.model.BookTransactionHistory;
 import org.serp.booklending.model.request.BookRequest;
 import org.serp.booklending.model.response.BookResponse;
 import org.serp.booklending.model.response.BorrowedBookResponse;
+import org.serp.booklending.utils.FileUtils;
 
 
 public class BookMapper {
@@ -33,7 +34,7 @@ public class BookMapper {
                 .archived(book.isArchived())
                 .shareable(book.isShareable())
                 .owner(book.getOwner().getFullName())
-                //todo .cover(FileUtils.readFileFromLocation(book.getBookCover()))
+                .cover(FileUtils.readFileFromLocation(book.getBookCover()))
                 .build();
     }
 
