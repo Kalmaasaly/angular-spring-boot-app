@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+/book-lending-ui/node_modules/
+/book-lending-ui/dist/
