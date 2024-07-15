@@ -32,7 +32,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.findBookById(bookId));
     }
 
-    @GetMapping("{book-id}")
+    @GetMapping
     public ResponseEntity<PageResponse<BookResponse>> findAllBooks(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
@@ -74,17 +74,17 @@ public class BookController {
         return ResponseEntity.ok(bookService.updateArchivedBook(bookId, authentication));
     }
 
-    @PostMapping("/archived/{book-id}")
+    @PostMapping("/borrow/{book-id}")
     public ResponseEntity<Long> borrowBook(@PathVariable("book-id") Long bookId, Authentication authentication) {
         return ResponseEntity.ok(bookService.borrowBook(bookId, authentication));
     }
 
-    @PatchMapping("/borrowed/return/{book-id}")
+    @PatchMapping("/borrow/return/{book-id}")
     public ResponseEntity<Long> returnBorrowBook(@PathVariable("book-id") Long bookId, Authentication authentication) {
         return ResponseEntity.ok(bookService.returnBorrowBook(bookId, authentication));
     }
 
-    @PatchMapping("/borrowed/return/approve/{book-id}")
+    @PatchMapping("/borrow/return/approve/{book-id}")
     public ResponseEntity<Long> returnApproveBook(@PathVariable("book-id") Long bookId, Authentication authentication) {
         return ResponseEntity.ok(bookService.returnApproveBook(bookId, authentication));
     }

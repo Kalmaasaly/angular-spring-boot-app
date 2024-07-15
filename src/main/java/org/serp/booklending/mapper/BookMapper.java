@@ -7,8 +7,9 @@ import org.serp.booklending.model.request.BookRequest;
 import org.serp.booklending.model.response.BookResponse;
 import org.serp.booklending.model.response.BorrowedBookResponse;
 import org.serp.booklending.utils.FileUtils;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public class BookMapper {
 
     public Book toBook(BookRequest request) {

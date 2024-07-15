@@ -18,12 +18,15 @@ import static java.io.File.separator;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class FileStorageService {
 
-    @Value("${application.file.path.images-out-path}")
+
     private final String fileUploadPath;
     private static final String EMPTY_STRING = "";
+
+    public FileStorageService(@Value("${application.file.path.images-out-path}") String fileUploadPath) {
+        this.fileUploadPath = fileUploadPath;
+    }
 
     public String saveFile(
             @NotNull MultipartFile file,
