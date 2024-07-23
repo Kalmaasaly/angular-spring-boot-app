@@ -1,10 +1,9 @@
 package org.serp.booklending.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.serp.booklending.model.Feedback;
-import org.serp.booklending.model.request.BookRequest;
 import org.serp.booklending.model.request.FeedbackRequest;
 import org.serp.booklending.model.response.FeedbackResponse;
 import org.serp.booklending.model.response.PageResponse;
@@ -13,19 +12,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+@RestController
 @RequestMapping(name = "feedbacks")
 @RequiredArgsConstructor
 @Tag(name = "Feedback")
 public class FeedBackController {
-    private FeedbackService feedbackService;
+    private final FeedbackService feedbackService;
 
-    @PostMapping
-    public ResponseEntity<Long> saveBook(@Valid @RequestBody FeedbackRequest  requestFeedback, Authentication authentication) {
+    @PostMapping("/saveFeedback")
+    @Operation(summary = "Insert a new saveFeedback")
+    public ResponseEntity<Long> saveFeedback(@Valid @RequestBody FeedbackRequest  requestFeedback, Authentication authentication) {
         return ResponseEntity.ok(feedbackService.save(requestFeedback, authentication));
     }
-
-
-
 
     @GetMapping("/book/{book-id}")
     public ResponseEntity<PageResponse<FeedbackResponse>> findFeedbacks(

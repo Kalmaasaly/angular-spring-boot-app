@@ -1,5 +1,6 @@
 package org.serp.booklending.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -20,9 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "Book")
 public class BookController {
 
-    private BookService bookService;
+    private final BookService bookService;
 
-    @PostMapping
+    @PostMapping("/saveBook")
+    @Operation(summary = "Insert a new book")
     public ResponseEntity<Long> saveBook(@Valid @RequestBody BookRequest requestBook, Authentication authentication) {
         return ResponseEntity.ok(bookService.save(requestBook, authentication));
     }
