@@ -32,6 +32,6 @@ public class RegistrationRequest {
     private String email;
     @NotEmpty(message = "Password is mandatory")
     @NotBlank(message = "Password is mandatory")
-    @Size(min = 8,message = "Password must be 8 minimum")
+    @Size(min = 6,message = "Password must be 8 minimum")
     private String password;
 }
