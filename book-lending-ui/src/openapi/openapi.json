@@ -54,7 +54,7 @@
         }
       }
     },
-    "/saveBook": {
+    "/ockerook": {
       "post": {
         "tags": [
           "Book"
